@@ -2,8 +2,10 @@ const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin'); //生成css文件的插件
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin'); //css文件的压缩插件
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin'); //js文件压缩的插件
-const HtmlWebpackPlugin = require('html-webpack-plugin')//生成html
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');//清理旧文件插件
+const HtmlWebpackPlugin = require('html-webpack-plugin') //生成html
+const {
+    CleanWebpackPlugin
+} = require('clean-webpack-plugin'); //清理旧文件插件
 
 
 module.exports = {
@@ -48,10 +50,41 @@ module.exports = {
                 ]
             },
             {
-                test: /\.(png|jpg|jepg|gif|svg)$/,
-                use: ['file-loader']
+                test: /\.(png|svg|jpe?g|gif)$/,
+                use: [
+                    {
+                        loader: 'url-loader',
+                        options: {
+                            limit: 40000
+                        }
+                    },
+                    {
+                        loader: 'image-webpack-loader',
+                        options: {
+                            mozjpeg: {
+                                progressive: true,
+                                quality: 65
+                            },
+                            // optipng.enabled: false will disable optipng
+                            optipng: {
+                                enabled: false,
+                            },
+                            pngquant: {
+                                quality: [0.65, 0.90],
+                                speed: 4
+                            },
+                            gifsicle: {
+                                interlaced: false,
+                            },
+                            // the webp option will enable WEBP
+                            webp: {
+                                quality: 75
+                            }
+                        }
+                    }
+                ]
             },
-            {
+            { //js压缩loader
                 test: /\.js$/,
                 use: [{
                     loader: 'babel-loader',
@@ -69,15 +102,15 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             title: 'webpack强大',
-            filename: 'index.html',//生成文件
-            template: path.resolve(__dirname, './index.html'),//模板
+            filename: 'index.html', //生成文件
+            template: path.resolve(__dirname, './index.html'), //模板
             minify: {
                 collapseWhitespace: true,
                 removeComments: true,
                 removeAttributeQuotes: false
             }
         }),
-        new CleanWebpackPlugin(['dist'])
+        new CleanWebpackPlugin()
     ],
     optimization: {
         minimizer: [
