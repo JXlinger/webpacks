@@ -1,13 +1,15 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');//生成css文件的插件
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 
 module.exports = {
     mode: 'development',
     entry: './src/index.js',
     output: {
-        filename: 'main.js',
-        path: path.resolve(__dirname, 'dist')
+        filename: 'main.[hash].js',
+        path: path.resolve(__dirname, 'dev')
     },
 
 
@@ -50,9 +52,20 @@ module.exports = {
     },
     plugins: [
         new MiniCssExtractPlugin({
-            filename: '[name].css',
-            chunkFilename: '[id].css'
-        })
+            filename: '[name].[hash].css',
+            chunkFilename: '[id].[hash].css'
+        }),
+        new HtmlWebpackPlugin({
+            title: 'webpack强大',
+            filename: 'index.html',//生成文件
+            template: path.resolve(__dirname, './index.html'),//模板
+            minify: {
+                collapseWhitespace: true,//压缩？
+                removeComments: true,//移除注释？
+                removeAttributeQuotes: false//移除属性的双引号？
+            }
+        }),
+        new CleanWebpackPlugin()
     ],
 
 }
