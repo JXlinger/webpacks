@@ -1,12 +1,14 @@
 const path = require('path');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');//生成css文件的插件
-const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin'); //生成css文件的插件
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin'); //css文件的压缩插件
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin'); //js文件压缩的插件
+
 
 
 
 module.exports = {
     mode: 'production',
-    entry: './src/index',
+    entry: './src/index.js',
     output: {
         filename: 'main.js',
         path: path.resolve(__dirname, 'dist')
@@ -15,8 +17,7 @@ module.exports = {
 
 
     module: {
-        rules: [
-            {
+        rules: [{
                 test: /\.(le|c)ss$/,
                 use: [
                     MiniCssExtractPlugin.loader,
@@ -38,7 +39,9 @@ module.exports = {
                             sourceMap: true,
                             ident: 'postcss',
                             plugins: (loader) => [
-                                require('autoprefixer')({ browsers: ['> 0.15% in CN'] })
+                                require('autoprefixer')({
+                                    browsers: ['> 0.15% in CN']
+                                })
                             ]
                         }
                     }
@@ -47,6 +50,15 @@ module.exports = {
             {
                 test: /\.(png|jpg|jepg|gif|svg)$/,
                 use: ['file-loader']
+            },
+            {
+                test: /\.js$/,
+                use: [{
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['es2015']
+                    }
+                }]
             }
         ]
     },
@@ -57,7 +69,10 @@ module.exports = {
         })
     ],
     optimization: {
-        minimizer: [new OptimizeCssAssetsPlugin({})]
+        minimizer: [
+            new OptimizeCssAssetsPlugin({}),
+            new UglifyJsPlugin()
+        ]
     }
 
 }
