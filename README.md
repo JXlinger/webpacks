@@ -24,7 +24,7 @@ npm run build
 #### uglifyjs-webpack-plugin
 
 > 这里在使用 uglifyjs-webpack-plugin JS代码压缩衣插件时，有个问题需要注意，我这里是没有默认安装 babel-loader 的，结果打包就出错（跟着视频看的，结果我的就不行），
-> 于是安装了 babel 
+> 于是安装了 babel，机缘巧合下做了es6转码
 
 ```
 npm install babel-loader babel-core babel-preset-es2015 --save-dev
@@ -65,6 +65,8 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 
 new CleanWebpackPlugin()
 ```
+
+
 
 > 这样就可以了
 

@@ -1,10 +1,10 @@
 const alertLate = function() {
-    alert('111')
-}
-const printMe = function () {
-    alert('可以的')
+  alert('111');
+};
+const printMe = function() {
+  alert('k可以吗');
 };
 export {
-    alertLate,
-    printMe
-}
+  alertLate,
+  printMe
+};

@@ -1,60 +1,29 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin'); //生成css文件的插件
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin'); //css文件的压缩插件
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin'); //js文件压缩的插件
+const HtmlWebpackPlugin = require('html-webpack-plugin') //生成html
 const {
     CleanWebpackPlugin
-} = require('clean-webpack-plugin');
+} = require('clean-webpack-plugin'); //清理旧文件插件
 
 
 module.exports = {
-    mode: 'development',
     entry: './src/index.js',
-    output: {
-        filename: 'main.[hash].js',
-        path: path.resolve(__dirname, 'dev')
+    resolve: {
+        alias: {
+            //vue$: path.resolve(__dirname, 'src/lib/vue/dist/vue.esm.js'),
+            '@': path.resolve(__dirname, 'src/')
+        },
+        extensions: [".js", ".vue",".json"]
     },
-
-
-
     module: {
         rules: [{
-                test: /\.(le|c)ss$/,
-                use: [
-                    MiniCssExtractPlugin.loader,
-                    {
-                        loader: 'css-loader',
-                        options: {
-                            sourceMap: true
-                        }
-                    },
-                    {
-                        loader: 'less-loader',
-                        options: {
-                            sourceMap: true
-                        }
-                    },
-                    {
-                        loader: 'postcss-loader',
-                        options: {
-                            sourceMap: true,
-                            ident: 'postcss',
-                            plugins: (loader) => [
-                                require('autoprefixer')({
-                                    browsers: ['> 0.15% in CN']
-                                })
-                            ]
-                        }
-                    },
-                ]
-            },
-            {
-                test: /\.(png|svg|jpe?g|gif|ico)$/,
-                //include: [path.resolve(__dirname, 'src/')],
-                use: [
-                    {
+                test: /\.(png|svg|jpe?g|gif)$/,
+                use: [{
                         loader: 'url-loader',
                         options: {
-                            limit: 40000
+                            limit: 45000
                         }
                     },
                     {
@@ -82,25 +51,43 @@ module.exports = {
                         }
                     }
                 ]
+            },
+            { //es6转es5
+                test: /\.js$/,
+                exclude: /(node_modules)/,
+                use: [{
+                        loader: 'babel-loader',
+                        options: {
+                            presets: ['es2015']
+                        }
+                    },
+                    {
+                        loader: "eslint-loader",
+                        //exclude: (__dirname, 'node_modules'),
+                        options: {
+                            // eslint options (if necessary)
+                            fix: true
+                        }
+                    }
+                ]
             }
         ]
     },
     plugins: [
-        new MiniCssExtractPlugin({
-            filename: '[name].[hash].css',
-            chunkFilename: '[id].[hash].css'
-        }),
         new HtmlWebpackPlugin({
             title: 'webpack强大',
             filename: 'index.html', //生成文件
             template: path.resolve(__dirname, './index.html'), //模板
             minify: {
-                collapseWhitespace: true, //压缩？
-                removeComments: true, //移除注释？
-                removeAttributeQuotes: false //移除属性的双引号？
+                collapseWhitespace: true,
+                removeComments: true,
+                removeAttributeQuotes: false
             }
         }),
         new CleanWebpackPlugin()
     ],
+    optimization: {
+        minimizer: []
+    }
 
 }
