@@ -7,7 +7,7 @@
  npm install
  ```
 
-* 打包：开发环境
+* 运行：开发环境
 
 ```
 npm run dev
